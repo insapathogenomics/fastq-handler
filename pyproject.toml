@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "fastq_handler"
+version = "0.1.2"
+description = "A python module to process minion fastq files by concatenating reads as they are generated"
+authors = ["SantosJGND <dourado.jns@gmail.com>", "Andre Santos <xiaodre2112@gmail.com>", "insapathogenomics <insapathogenomics@insa.min-saude.pt>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+dataclasses = "0.6"
+natsort = "8.3.1"
+pandas = "1.5.3"
+pip = "21.2.3"
+setuptools = "57.4.0"
+xopen = "1.7.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+fastq_handler = "fastq_handler.__main__:main"
