@@ -2,7 +2,8 @@ import argparse
 
 from fastq_handler.fastq_handler import PreMain
 
-from fastq_handler.records import ProcessActionMergeWithLast, RunConfig
+from fastq_handler.actions import ProcessActionMergeWithLast
+from fastq_handler.configs import RunConfig
 
 
 def get_arguments():
@@ -24,6 +25,9 @@ def get_arguments():
     parser.add_argument(
         "--monitor", help="run indefinitely", action="store_true")
 
+    parser.add_argument(
+        "--max-size", help="max size of the output file, in kilobytes", type=int, default=1000000)
+
     return parser.parse_args()
 
 
@@ -38,6 +42,7 @@ def main():
         actions=[ProcessActionMergeWithLast],
         keep_name=args.keep_names,
         sleep_time=args.sleep,
+        max_size=(args.max_size * 1000),
     )
 
     compressor = PreMain(
