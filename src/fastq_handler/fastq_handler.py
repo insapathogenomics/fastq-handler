@@ -12,7 +12,8 @@ import time
 
 import pandas as pd
 
-from fastq_handler.records import Processed, RunConfig
+from fastq_handler.configs import RunConfig
+from fastq_handler.records import Processed
 from fastq_handler.utilities import Utils
 
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -249,6 +250,9 @@ class DirectoryProcessing():
         if self.match_to_processed(fastq_file, fastq_dir):
             return False
 
+        if self.processed.check_ignored(file_path):
+            return False
+
         return False if self.check_file_open(file_path) else True
 
     def get_files(self):
@@ -367,11 +371,28 @@ class DirectoryProcessingSimple(DirectoryProcessing):
     def __init__(self, fastq_dir: str, run_metadata: RunConfig, processed: Processed, start_time: float):
         super().__init__(fastq_dir, run_metadata, processed, start_time)
 
+    def estimate_actions_size(self, fastq_file: str, sample_id: str) -> int:
+        """
+        estimate actions size
+        """
+
+        size = os.path.getsize(fastq_file)
+
+        if self.run_metadata.actions:
+
+            for process_action in self.run_metadata.actions:
+
+                size = process_action.estimate_output_size(
+                    size, sample_id, self.processed)
+
+        return size
+
     def process_file(self, fastq_file: str):
 
         destination_file = fastq_file
 
         if self.run_metadata.actions:
+
             destination_file = self.set_destination_filepath(
                 fastq_file, self.fastq_dir)
 
@@ -379,6 +400,16 @@ class DirectoryProcessingSimple(DirectoryProcessing):
 
             sample_id = self.processed.get_sample_id_from_merged(
                 destination_file)
+
+            projected_size = self.estimate_actions_size(
+                destination_file, sample_id)
+
+            if projected_size > self.run_metadata.max_size:
+                os.remove(destination_file)
+                self.processed.ignore_this(
+                    fastq_file
+                )
+                return self
 
             for process_action in self.run_metadata.actions:
 
@@ -395,6 +426,7 @@ class DirectoryProcessingSimple(DirectoryProcessing):
         files_to_process = self.get_files()
 
         for ix, fastq_file in enumerate(files_to_process):
+
             self.process_file(fastq_file)
 
     def process_folder(self):
@@ -404,42 +436,3 @@ class DirectoryProcessingSimple(DirectoryProcessing):
         """
         self.prep_output_dirs()
         self.local_process()
-
-############################ SYSTEM STUFF ##########################
-
-# TESTING
-
-# # print("barcoding on and gz")
-# minion_file_dir="C:\\Users\\andre\\OneDrive - FCT NOVA\\André\\Mestrado - Bioinfo\\2º Ano\\Projeto em Multi-Ómicas - INSA\\teste_1\\testing_automatic\\test_fastq_gz_bar\\fastq_gz_barcoding"
-# output_dir="q"
-# # output_dir="C:\\Users\\andre\\OneDrive - FCT NOVA\\André\\Mestrado - Bioinfo\\2º Ano\\Projeto em Multi-Ómicas - INSA\\teste_1\\testing_files\\testing_merging_and_metadata_files\\barcoded_samples"
-# tsv_temp_name="template_metadata.tsv"
-# tsv_temp_dir="C:\\Users\\andre\\OneDrive - FCT NOVA\\André\\Mestrado - Bioinfo\\2º Ano\\Projeto em Multi-Ómicas - INSA\\teste_1\\testing_files\\testing_merging_and_metadata_files\\barcoded_samples"
-# main(minion_file_dir, output_dir, tsv_temp_name, tsv_temp_dir, sleep_time=5)
-
-
-# # print("barcoding off and gz")
-# minion_file_dir="C:\\Users\\andre\\OneDrive - FCT NOVA\\André\\Mestrado - Bioinfo\\2º Ano\\Projeto em Multi-Ómicas - INSA\\teste_1\\testing_automatic\\test_fastq_gz_n_bar\\fastq_gz_n_barcoding"
-# output_dir="q"
-# # output_dir="C:\\Users\\andre\\OneDrive - FCT NOVA\\André\\Mestrado - Bioinfo\\2º Ano\\Projeto em Multi-Ómicas - INSA\\teste_1\\testing_files\\testing_merging_and_metadata_files\\barcoded_samples"
-# tsv_temp_name="template_metadata.tsv"
-# tsv_temp_dir="C:\\Users\\andre\\OneDrive - FCT NOVA\\André\\Mestrado - Bioinfo\\2º Ano\\Projeto em Multi-Ómicas - INSA\\teste_1\\testing_files\\testing_merging_and_metadata_files\\barcoded_samples"
-# main(minion_file_dir, output_dir, tsv_temp_name, tsv_temp_dir, sleep_time=5)
-
-
-# # print("barcoding on and fastq")
-# minion_file_dir="C:\\Users\\andre\\OneDrive - FCT NOVA\\André\\Mestrado - Bioinfo\\2º Ano\\Projeto em Multi-Ómicas - INSA\\teste_1\\testing_automatic\\test_fastq_bar\\fastq_barcoding"
-# output_dir="q"
-# # output_dir="C:\\Users\\andre\\OneDrive - FCT NOVA\\André\\Mestrado - Bioinfo\\2º Ano\\Projeto em Multi-Ómicas - INSA\\teste_1\\testing_files\\testing_merging_and_metadata_files\\barcoded_samples"
-# tsv_temp_name="template_metadata.tsv"
-# tsv_temp_dir="C:\\Users\\andre\\OneDrive - FCT NOVA\\André\\Mestrado - Bioinfo\\2º Ano\\Projeto em Multi-Ómicas - INSA\\teste_1\\testing_files\\testing_merging_and_metadata_files\\barcoded_samples"
-# main(minion_file_dir, output_dir, tsv_temp_name, tsv_temp_dir, sleep_time=5)
-
-
-# # print("barcoding off and fastq")
-# minion_file_dir="C:\\Users\\andre\\OneDrive - FCT NOVA\\André\\Mestrado - Bioinfo\\1º Ano\\2º Semestre\\Projeto em Multi-Ómicas - INSA\\teste_1\\testing_automatic\\test_fastq_n_bar\\fastq_n_barcoding"
-# output_dir="q"
-# # output_dir="C:\\Users\\andre\\OneDrive - FCT NOVA\\André\\Mestrado - Bioinfo\\2º Ano\\Projeto em Multi-Ómicas - INSA\\teste_1\\testing_files\\testing_merging_and_metadata_files\\barcoded_samples"
-# tsv_temp_name="template_metadata.tsv"
-# tsv_temp_dir="C:\\Users\\andre\\OneDrive - FCT NOVA\\André\\Mestrado - Bioinfo\\1º Ano\\2º Semestre\\Projeto em Multi-Ómicas - INSA\\teste_1\\testing_files\\testing_merging_and_metadata_files\\barcoded_samples"
-# main(minion_file_dir, output_dir, tsv_temp_name, tsv_temp_dir, sleep_time=5)

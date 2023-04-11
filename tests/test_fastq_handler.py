@@ -5,8 +5,10 @@ import unittest
 
 import pandas as pd
 
-from fastq_handler.fastq_handler import DirectoryProcessing, PreMain, RunConfig
-from fastq_handler.records import ProcessActionMergeWithLast, Processed
+from fastq_handler.actions import ProcessActionMergeWithLast
+from fastq_handler.configs import RunConfig
+from fastq_handler.fastq_handler import PreMain
+from fastq_handler.records import Processed
 from fastq_handler.utilities import ConstantsSettings, Utils
 
 

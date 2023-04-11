@@ -1,13 +1,10 @@
 
 
 import os
-from abc import ABC, ABCMeta, abstractmethod
 from dataclasses import dataclass
 from typing import List, Optional, Type
 
 import pandas as pd
-
-from fastq_handler.utilities import Utils
 
 
 class Processed:
@@ -30,6 +27,43 @@ class Processed:
     def __init__(self, output_dir: str):
         self.output_dir = output_dir
         self.processed = self.read_processed()
+
+        self._ignore = []
+
+    @property
+    def processed_entries(self) -> pd.DataFrame:
+        """
+        get processed entries
+        """
+
+        processed_entries = self.processed[self.processed["merged"]
+                                           != self.processed["fastq"]].copy()
+
+        return processed_entries
+
+    def ignore_this(self, fastq_file: str):
+        """
+        ignore this file
+        """
+
+        self._ignore.append(fastq_file)
+
+    def check_ignored(self, fastq_file: str):
+        """
+        check if ignored
+        """
+
+        if fastq_file in self._ignore:
+            return True
+        else:
+            return False
+
+    def processed_fastq_list(self) -> List[str]:
+        """
+        get list of fastq files
+        """
+
+        return self.processed_entries.fastq.tolist()
 
     def read_processed(self):
         """
@@ -230,84 +264,3 @@ class Processed:
                 "merged",
             ]
         )
-
-
-class ProcessAction(ABCMeta):
-    """
-    abstract class for processing action
-    """
-
-    @staticmethod
-    @abstractmethod
-    def process(fastq_file: str, sample_id: str, processed: Processed):
-        """
-        process
-        """
-        pass
-
-
-class ProcessActionMergeWithLast(ProcessAction):
-    """get_dir_merged_last
-    class to merge with last"""
-
-    @staticmethod
-    def process(fastq_file: str, sample_id: str, processed: Processed):
-        """
-        process
-        """
-        last_run_file = processed.get_id_merged_last(
-            sample_id)
-
-        if last_run_file == "":
-            return
-
-        utils = Utils()
-
-        utils.append_file_to_gz(
-            last_run_file, fastq_file
-        )
-
-
-@dataclass
-class InputState:
-    """
-    class to hold input - defaults set for inheritance reasons. check py3.10 for better solution
-    """
-
-    fastq_dir: str = ""
-    name_tag: str = ""
-
-
-@dataclass
-class RunParams:
-    """
-    class to hold params with default values
-    """
-    actions: Optional[List[Type[ProcessAction]]] = None
-    keep_name: bool = False
-    sleep_time: int = 10
-
-
-@dataclass
-class OutputDirs:
-    """
-    class to hold output dirs
-    """
-    output_dir: str = "output"
-    logs_dirname: str = "logs"
-
-
-@dataclass
-class RunConfig(InputState, RunParams, OutputDirs):
-    """
-    class to hold run config"""
-
-    def __post_init__(self):
-        """
-        post init
-        """
-        if self.actions is None:
-            self.actions = []
-
-        self.logs_dir = os.path.join(self.output_dir, self.logs_dirname)
-        self.output_dir = os.path.abspath(self.output_dir)
