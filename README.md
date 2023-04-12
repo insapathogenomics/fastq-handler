@@ -19,19 +19,24 @@ A directory containing fastq files. The files can be in subfolders (each represe
 ## API
 
 ```bash
-usage: fastq_handler [-h] [-i INPUT] [-o OUTPUT] [-n TAG] [--keep_names]
+usage: fastq_handler [-h] -i IN_DIR -o OUT_DIR [-s SLEEP] [-n TAG] [--keep_names] [--monitor] [--max-size MAX_SIZE] [--downsize] [--merge]
 
-parse arguments
+Process fastq files.
 
 optional arguments:
-    -h, --help            show this help message and exit
-    -i INPUT, --input INPUT
+  -h, --help            show this help message and exit
+  -i IN_DIR, --in_dir IN_DIR
                         Input directory
-    -o OUTPUT, --output OUTPUT
+  -o OUT_DIR, --out_dir OUT_DIR
                         Output directory
-    -n TAG, --tag TAG     Tag to add to output file name
-    --keep_names          Keep original file names in output file
-    --max-size MAX_SIZE   max size of the output file, in kilobytes
+  -s SLEEP, --sleep SLEEP
+                        Sleep time
+  -n TAG, --tag TAG     name tag, if given, will be added to the output file names
+  --keep_names          keep original file names
+  --monitor             run indefinitely
+  --max-size MAX_SIZE   max size of the output file, in kilobytes
+  --downsize            downsize fastq files to max-size
+  --merge               merge files
 ```
 
 ## REQUIREMENTS
