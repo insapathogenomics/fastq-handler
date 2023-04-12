@@ -16,7 +16,7 @@ output fastq.gz, containing all reads from the previous files. The output direct
 
 A directory containing fastq files. The files can be in subfolders (each representing a different sample). The files can be gzipped or not.
 
-## USAGE
+## API
 
 ```bash
 usage: fastq_handler [-h] [-i INPUT] [-o OUTPUT] [-n TAG] [--keep_names]
