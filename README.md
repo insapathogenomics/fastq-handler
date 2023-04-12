@@ -1,6 +1,11 @@
-# mfmc
+# Fastq Handler
 
-** A python module to process ONT fastq files by concatenating reads as they are generated during a sequencing run**
+[![PyPI version](https://badge.fury.io/py/fastq-handler.svg)](https://badge.fury.io/py/fastq-handler)
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/fastq-handler.svg)](https://pypi.python.org/pypi/fastq-handler/)
+[![PyPI license](https://img.shields.io/pypi/l/fastq-handler.svg)](https://pypi.python.org/pypi/fastq-handler/)
+[![PyPI format](https://img.shields.io/pypi/format/fastq-handler.svg)](https://pypi.python.org/pypi/fastq-handler/)
+
+_A python module to process ONT fastq files by concatenating reads as they are generated during a sequencing run_
 
 ## INTRODUCTION
 
@@ -26,6 +31,7 @@ optional arguments:
                         Output directory
     -n TAG, --tag TAG     Tag to add to output file name
     --keep_names          Keep original file names in output file
+    --max-size MAX_SIZE   max size of the output file, in kilobytes
 ```
 
 ## REQUIREMENTS

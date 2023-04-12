@@ -18,22 +18,6 @@ from fastq_handler.utilities import Utils
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
-
-"""
-Notes:
-- Now automatically detects if there's barcoding or not and also the format.
-- Now it always creates .fastq.gz merged files.
-
-TO DO:
-- de sleep em sleep fazer uma pasta com 'lattest_compilation_to_upload' todos os últimos concatenados por amostra
-(barcode10, barcode11, etc) + um ficheiro de metadata com todos os dados respetivos dos concatenados totais.
-
-"""
-
-HELP = " _________________________________________________\n | mfmc.py - MERGING FASTQ AND METADATA CREATION | \n _________________________________________________\nExample of usage:\npython mfmc.py --in_dir C:\\users\\samples --out_dir C:\\users\processed_files --tsv_t_name template.tsv --tsv_t_dir C:\\users\\templates \n\nOptions and arguments:\n--in_dir [DIRECTORY OF THE FAST_PASS] : directory of the files being produced by the sequencing machine (typically the 'fast_pass' folder).\n--out_dir [OUTPUT DIRECTORY or 'q' for the default] : desired directory to storage the output files\n--tsv_t_n [TSV TEMPLATE FILE NAME] : name of the tsv template\n--tsv_t_dir [TSV TEMPLATE DIRECTORY] : directory of the tsv template file\n--sleep [TIME SLEEP] : amount of time (in seconds) for the script to hold, between search cycles"
-ARGUMENT_OPTIONS = ["--in_dir", "--out_dir", "--tsv_t_n", "--tsv_t_dir"]
-
-
 ####################         5 - Main functions          #####################
 
 
@@ -396,20 +380,21 @@ class DirectoryProcessingSimple(DirectoryProcessing):
             destination_file = self.set_destination_filepath(
                 fastq_file, self.fastq_dir)
 
-            self.append_to_file(fastq_file, destination_file)
-
             sample_id = self.processed.get_sample_id_from_merged(
                 destination_file)
 
+            ###########################################
+
             projected_size = self.estimate_actions_size(
-                destination_file, sample_id)
+                fastq_file, sample_id)
 
             if projected_size > self.run_metadata.max_size:
-                os.remove(destination_file)
                 self.processed.ignore_this(
                     fastq_file
                 )
                 return self
+
+            self.append_to_file(fastq_file, destination_file)
 
             for process_action in self.run_metadata.actions:
 

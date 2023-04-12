@@ -59,6 +59,32 @@ class Utils:
 
         shutil.copy(input_file, destination)
 
+    def temp_fastq_file(self, fastq_file: str):
+        """
+        get temp fastq file
+        """
+
+        if fastq_file.endswith(".gz"):
+            temp_fastq_file = fastq_file[:-3] + ".temp.gz"
+        else:
+            temp_fastq_file = fastq_file + ".temp"
+
+        return temp_fastq_file
+
+    def move_file(self, input_file, destination):
+        """
+        move file
+        """
+
+        if not os.path.exists(
+            os.path.dirname(destination)
+        ):
+            os.makedirs(
+                os.path.dirname(destination)
+            )
+
+        shutil.move(input_file, destination)
+
     def seqs_in_dir(self, fastq_dir: str):
         """
         Check if there are any fastq files in the directory
