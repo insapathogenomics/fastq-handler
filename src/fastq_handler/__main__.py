@@ -14,7 +14,7 @@ def get_arguments():
                         help="Output directory", required=True)
 
     parser.add_argument("-s", "--sleep", help="Sleep time",
-                        type=int, default=60)
+                        type=int, default=600)
 
     parser.add_argument("-n", "--tag", help="name tag, if given, will be added to the output file names",
                         required=False, type=str, default="")

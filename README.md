@@ -30,11 +30,11 @@ optional arguments:
   -o OUT_DIR, --out_dir OUT_DIR
                         Output directory
   -s SLEEP, --sleep SLEEP
-                        Sleep time
+                        Sleep time (default 600 seconds)
   -n TAG, --tag TAG     name tag, if given, will be added to the output file names
   --keep_names          keep original file names
   --monitor             run indefinitely
-  --max-size MAX_SIZE   max size of the output file, in kilobytes
+  --max-size MAX_SIZE   max size of the output file, in kilobytes (default 1000000 kb)
   --downsize            downsize fastq files to max-size
   --merge               merge files
 ```
