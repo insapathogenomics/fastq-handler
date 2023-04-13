@@ -64,6 +64,10 @@ python -m pip install fastq-handler
 - **fastq.gz** files containing all reads from the previous files.
 - **log.txt** file containing the concatenation process.
 
+## Acknowledgements
+
+This package took great inspiration inspiration from [fastq-filter](https://github.com/LUMC/fastq-filter), which is a tool for filtering FASTQ files. From it we took the idea of using [xopen](https://github.com/pycompression/xopen) and [dnaio](https://github.com/marcelm/dnaio) in combination as well the actions design pattern. The code for fastq filtering was adapted to the concatenation process.
+
 ## Maintainers
 
 - [**@xiaodre21**](https://github.com/xiaodre21)

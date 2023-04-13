@@ -26,7 +26,7 @@ def get_arguments():
         "--monitor", help="run indefinitely", action="store_true")
 
     parser.add_argument(
-        "--max-size", help="max size of the output file, in kilobytes", type=int, default=400000)
+        "--max-size", help="max size of the output file, in kilobytes", type=int, default=1000000)
 
     parser.add_argument(
         "--downsize", help="downsize fastq files to max-size", action="store_true")

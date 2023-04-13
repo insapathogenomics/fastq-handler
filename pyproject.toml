@@ -26,3 +26,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 fastq_handler = "fastq_handler.__main__:main"
+
+[tool.poetry.urls]
+homepage = "https://github.com/insapathogenomics/fastq-handler"
